@@ -10,6 +10,11 @@
  
   
   <style>
+
+  	html {
+  		background: #EFEFEF;
+  	}
+
   	*{
 		font-family: 'Roboto', sans-serif;
  	}
@@ -73,7 +78,7 @@
  	}
 	 
 	.event-container {
-		/* filter: drop-shadow(0px 2px 1px #888888); */
+		background: #FFFFFF;
 		padding: 20px;
 		box-shadow: 0 0 1px #888888;
 		margin: 10px;
@@ -151,8 +156,7 @@ What is your location? -&gt; <input id="searchterm" type="text" size="20" maxlen
 	  
 	  
 	  function jsonLoaded(obj){
-		//   console.log("obj = " +obj);
-		  console.log("obj stringified = " + JSON.stringify(obj));
+	  	document.querySelector("#event-content").innerHTML = "";
 		  
 		  // if there's an error, print a message and return
 		  if(obj.error){
@@ -177,7 +181,6 @@ What is your location? -&gt; <input id="searchterm" type="text" size="20" maxlen
 		  
 		  // If there is an array of results, loop through them
 		  var allEvents = obj.events.event;
-		//   console.log("allEvents = " + allEvents);
 		  var bigString = "<p><b>There are " + allEvents.length + " events for " + value + "</b></p>";
 		  bigString += "<hr />";
 		  
@@ -200,18 +203,26 @@ What is your location? -&gt; <input id="searchterm" type="text" size="20" maxlen
 				var title = document.createElement("div");
 				title.classList.add('event');
 				title.classList.add('title');
-				title.innerHTML = allEvents[key].title.bold();
+				title.innerHTML = "<h2>" + allEvents[key].title + "</h2>";
 				eventContainer.appendChild(title);
 
+				//image
+				var image = document.createElement("div");
+				image.classList.add('event');
+				image.classList.add('description');
+				if (allEvents[key].image != null) {
+					image.innerHTML = "<img src=" + allEvents[key].image;
+					eventContainer.appendChild(image);
+				}
+
 				// time
-				
 				var date = new Date(allEvents[key].start_time);
 				var hours = date.getHours();
 				var minutes = date.getMinutes();
 				var ampm = hours >= 12 ? 'pm' : 'am';
 				hours = hours % 12;
-				hours = hours ? hours : 12; // the hour '0' should be '12'
-				minutes = minutes < 10 ? '0'+minutes : minutes;
+				hours = hours ? hours : 12;
+				minutes = minutes < 10 ? '0'+ minutes : minutes;
 				var strTime = hours + ':' + minutes + ' ' + ampm;
 
 				date = date.toDateString();
@@ -221,17 +232,6 @@ What is your location? -&gt; <input id="searchterm" type="text" size="20" maxlen
 				time.innerHTML = date + " @ " + strTime;
 				eventContainer.appendChild(time);
 
-				//description
-				var description = document.createElement("div");
-				description.classList.add('event');
-				description.classList.add('description');
-				if (allEvents[key].description != null) {
-					description.innerHTML = allEvents[key].description;
-				} else {
-					description.innerHTML = "<i>No description available</i>";
-				}
-				eventContainer.appendChild(description);
-				
 				// venue
 				var venue = document.createElement("div");
 				venue.classList.add('event');
@@ -253,12 +253,22 @@ What is your location? -&gt; <input id="searchterm" type="text" size="20" maxlen
 				cityName.innerHTML = allEvents[key].city_name + ", " + allEvents[key].region_name;
 				eventContainer.appendChild(cityName);
 
+				//description
+				var description = document.createElement("div");
+				description.classList.add('event');
+				description.classList.add('description');
+				if (allEvents[key].description != null) {
+					description.innerHTML = allEvents[key].description;
+				} else {
+					description.innerHTML = "<i>No description available</i>";
+				}
+				eventContainer.appendChild(description);
 				
 				// venue
 				var url = document.createElement("div");
 				url.classList.add('event');
 				url.classList.add('url');
-				url.innerHTML = "<a href=" + allEvents[key].url + ">Link</a>";
+				url.innerHTML = "<a target='_blank' href=" + allEvents[key].url + ">Link to Event</a>";
 				eventContainer.appendChild(url);
 			}
 	  }	
